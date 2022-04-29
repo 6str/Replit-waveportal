@@ -23,7 +23,7 @@ const App = () => {
    * All state property to store all waves
    */
 	const [allWaves, setAllWaves] = useState([]);
-	const contractAddress = '0xBbE43AeeF858C7b7DB6351bc719B9429BB9D72B1';
+	const contractAddress = '0xEe653d7981772855D00fb76D8CEd9A0A2d8250C6';
 
 	/*
    * Create a method that gets all waves from your contract
@@ -174,6 +174,7 @@ const App = () => {
         */
 				var waveMessage = document.getElementById('waveMessage').value;
 				const waveTxn = await wavePortalContract.wave(waveMessage);
+        //const waveTxn = await wavePortalContract.wave(waveMessage, { gasLimit: 300000 });
         console.log('Mining...', waveTxn.hash);
         toast.info('Mining...', waveTxn.hash);
 				await waveTxn.wait();
@@ -260,7 +261,8 @@ const requireMessage = msg => {
 
   
 	useEffect(() => {
-		checkIfWalletIsConnected();
+    // useEffect is called on page render
+    checkIfWalletIsConnected();
 	}, []);
 
 	return (

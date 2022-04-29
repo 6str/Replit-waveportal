@@ -1,0 +1,17 @@
+ask for message with wave and store
+ask for name and store against wallet address
+ask for donation and store running total from the wallet
+
+remember users' wallets, donations and messages when they come back
+
+function to get total donations from total unique wallets
+function to get all messages and list
+
+help on how to get fake ether, connect to rinkeby etc
+
+
+
+I'll leave this up to you: figure out how to add a textbox that lets users add their own custom message they can send to the wave function :).
+The goal? You want to give your users the ability to send you a custom message using a textbox they can type in! Or, maybe you want them to send you a link to a meme? Or a Spotify link? It's up to you!
+
+light / dark theme

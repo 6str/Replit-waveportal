@@ -1,0 +1,72 @@
+.mainContainer {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 64px;
+}
+
+.dataContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 600px;
+}
+
+.header {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.bio {
+  text-align: center;
+  font-weight: 600;
+  color: darkgreen;
+  margin-top: 80px;
+}
+
+.user-message {
+  font-size: 18px;
+  font-weight: 400;
+  color: black;
+  background-color: white ;
+  border-radius: 4px;
+  box-shadow: 2px 2px 3px 4px darkslateblue;
+  margin-top: 60px;
+  padding: 15px;  
+}
+
+.waveButton {
+  cursor: pointer;
+  margin-top: 16px;
+  padding: 60px;
+  border: 3;
+  border-radius: 15px;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.info {
+  text-align: center;
+  font-weight: 800;
+  background-color: navy ;
+  color: lightgray;
+  padding: 15px;
+  margin-top: 25px;
+  margin-bottom: 25px;
+  border-radius: 4px;
+  box-shadow: 2px 2px 3px 4px darkslateblue;
+}
+
+.waveCount {
+  text-align: center;
+  font-weight: 800;
+  background-color: navy ;
+  color: lightgray;
+  padding: 15px;
+  margin-top: 40px;
+  margin-bottom: 5px;
+  border-radius: 4px;
+  box-shadow: 2px 2px 3px 4px darkslateblue;
+}
+

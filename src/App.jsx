@@ -190,7 +190,8 @@ const App = () => {
 			}
 		} catch (error) {
 			console.log(error);
-      
+
+      // if error due to contract require statement, extract require statment message
       var tmpMsg = requireMessage(error.message);
       if(tmpMsg) {
         console.log(tmpMsg);

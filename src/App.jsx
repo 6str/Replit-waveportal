@@ -23,7 +23,7 @@ const App = () => {
    * All state property to store all waves
    */
 	const [allWaves, setAllWaves] = useState([]);
-	const contractAddress = '0xB49b43fBfC96192C3a2dC81Eb7545304454DdF38';
+	const contractAddress = '0xBbE43AeeF858C7b7DB6351bc719B9429BB9D72B1';
 
 	/*
    * Create a method that gets all waves from your contract
@@ -101,7 +101,7 @@ const App = () => {
 				console.log('Found an authorized account:', account);
         //toast.info('Found an authorized account:', account);
 				setCurrentAccount(account);
-				getAllWaves();
+				await getAllWaves();
 			} else {
 				console.log('No authorized account found');
         setCurrentAccount('');
@@ -114,7 +114,7 @@ const App = () => {
 	};
 
 	/**
-	 * Implement your connectWallet method here
+	 * connectWallet
 	 */
 	const connectWallet = async () => {
 		try {
@@ -133,24 +133,30 @@ const App = () => {
 			console.log('Connected', accounts[0]);
       toast.info('Connected', accounts[0]);
 			setCurrentAccount(accounts[0]);
-			getAllWaves();
+			await getAllWaves();
 		} catch (error) {
 			console.log(error);
 		}
     setShowSpinner(false);
 	};
 
+
+  /**
+	 * wave
+	 */
 	const wave = async () => {
     try {
-      checkIfWalletIsConnected();
+
+      await checkIfWalletIsConnected();
       if(!currentAccount){
-          toast.error("You'll need to connect your wallet to wave")
+            toast.error("You'll need to connect your wallet to wave")
         return;
       };
       
-      const { ethereum } = window;
-      setShowSpinner(true);
+      setShowSpinner(true);      
       
+      const { ethereum } = window;
+     
 			if (ethereum) {
 				const provider = new ethers.providers.Web3Provider(ethereum);
 				const signer = provider.getSigner();
@@ -168,7 +174,7 @@ const App = () => {
         */
 				var waveMessage = document.getElementById('waveMessage').value;
 				const waveTxn = await wavePortalContract.wave(waveMessage);
-				console.log('Mining...', waveTxn.hash);
+        console.log('Mining...', waveTxn.hash);
         toast.info('Mining...', waveTxn.hash);
 				await waveTxn.wait();
 				console.log('Mined -- ', waveTxn.hash);
@@ -176,7 +182,7 @@ const App = () => {
 
 				count = await wavePortalContract.getTotalWaves();
 				console.log('Retrieved total wave count...', count.toNumber());
-        getAllWaves();
+        await getAllWaves();
         document.getElementById('waveMessage').value = '';
         
 			} else {
@@ -184,10 +190,37 @@ const App = () => {
 			}
 		} catch (error) {
 			console.log(error);
+      
+      var tmpMsg = requireMessage(error.message);
+      if(tmpMsg) {
+        console.log(tmpMsg);
+        toast.error(tmpMsg);
+      }
 		}
     setShowSpinner(false);
 	};
 
+const requireMessage = msg => {
+    // contact require messages with have both start and end sigs
+    // if it doesn't have both as expected, return an empty string
+    
+    var startSig = `message":`;
+    var endSig = `",`
+    var startPos = msg.indexOf(startSig);
+
+    startPos = startPos + startSig.length + 1;
+    msg = msg.substring(startPos);
+
+    var endPos = msg.indexOf(endSig);
+    if(endPos < 0){ 
+        return null;
+    } else {
+        msg = msg.substring(0, endPos)
+    }
+    return msg;
+};
+
+  
   {/* function playground - bit of a mess and don't necessarily work */}
   const notify = () => toast("toastMsg");
   const toastMsg = funcMsg => {

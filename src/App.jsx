@@ -1,5 +1,6 @@
-// todo: clear message box after successful wave
-// perhaps reverse order of wave message so newes show first
+// todo: changing shade across the page background
+// if no wallet connected when wave at me clicked : prompt to connect wallet
+// when wallet disconnected app doesn't know or reflect the change unless refreshed/reloaded
 
 import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
@@ -85,8 +86,7 @@ const App = () => {
       setShowSpinner(true);
 			const { ethereum } = window;
 
-      toast("checking wallet connected");
-      
+      //toast("checking wallet connected");
 			if (!ethereum) {
 				console.log('Make sure you have metamask!');
 				return;
@@ -99,12 +99,13 @@ const App = () => {
 			if (accounts.length !== 0) {
 				const account = accounts[0];
 				console.log('Found an authorized account:', account);
-        toast.info('Found an authorized account:', account);
+        //toast.info('Found an authorized account:', account);
 				setCurrentAccount(account);
 				getAllWaves();
 			} else {
 				console.log('No authorized account found');
-        toast.error('No authorized account found');
+        setCurrentAccount('');
+        //toast.error('No authorized account found');
 			}
 		} catch (error) {
 			console.log(error);
@@ -140,8 +141,14 @@ const App = () => {
 	};
 
 	const wave = async () => {
-		try {
-			const { ethereum } = window;
+    try {
+      checkIfWalletIsConnected();
+      if(!currentAccount){
+          toast.error("You'll need to connect your wallet to wave")
+        return;
+      };
+      
+      const { ethereum } = window;
       setShowSpinner(true);
       
 			if (ethereum) {

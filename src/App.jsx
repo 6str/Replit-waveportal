@@ -23,7 +23,7 @@ const App = () => {
    * All state property to store all waves
    */
 	const [allWaves, setAllWaves] = useState([]);
-	const contractAddress = '0xEe653d7981772855D00fb76D8CEd9A0A2d8250C6';
+	const contractAddress = '0xEFd97b86399EEFef5aDC306b8813A40Cd3A188E6';
 
 	/*
    * Create a method that gets all waves from your contract
@@ -50,7 +50,9 @@ const App = () => {
          * We only need address, timestamp, and message in our UI so let's
          * pick those out
          */
-				let wavesCleaned = [];
+/*
+my old code which worked pretty good
+        let wavesCleaned = [];
 				waves.slice().reverse().forEach(wave => {
 					wavesCleaned.push({
 						address: wave.waver,
@@ -58,7 +60,16 @@ const App = () => {
 						message: wave.message
 					});
 				});
-
+*/
+        /* new version of the above */
+        const wavesCleaned = waves.map(wave => {
+        return {
+          address: wave.waver,
+          timestamp: new Date(wave.timestamp * 1000),
+          message: wave.message,
+        };
+      });
+        
 				/*
          * Store our data in React State
          */
@@ -263,6 +274,38 @@ const requireMessage = msg => {
 	useEffect(() => {
     // useEffect is called on page render
     checkIfWalletIsConnected();
+
+ /**
+ * Listen in for emitter events!
+ */
+    let wavePortalContract;
+
+    const onNewWave = (from, timestamp, message) => {
+      console.log("NewWave", from, timestamp, message);
+      setAllWaves(prevState => [
+        ...prevState,
+        {
+          address: from,
+          timestamp: new Date(timestamp * 1000),
+          message: message,
+        },
+      ]);
+    };
+  
+    if (window.ethereum) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+  
+      wavePortalContract = new ethers.Contract(contractAddress, contractABI, signer);
+      wavePortalContract.on("NewWave", onNewWave);
+    }
+  
+    return () => {
+      if (wavePortalContract) {
+        wavePortalContract.off("NewWave", onNewWave);
+      }
+    };
+  
 	}, []);
 
 	return (

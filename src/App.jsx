@@ -1,6 +1,11 @@
 // todo: changing shade across the page background
+// can't change the wave message text after initiated. make clear by locking the input box
 // if no wallet connected when wave at me clicked : prompt to connect wallet
 // when wallet disconnected app doesn't know or reflect the change unless refreshed/reloaded
+// bug : since adding code to getAllWaves and event listener in useEffect to pick up the new wave event, a new wave shows up twice after the wave txn 
+// a fixed gas price could be a problem when it's wildly expensive on the test net? can the contact pay the gas for sending the prize? can it be deferred till gas price cheap
+// emit win event that the front end listens to and toast message
+
 
 import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
@@ -69,11 +74,13 @@ my old code which worked pretty good
           message: wave.message,
         };
       });
-        
+        //prefer newest messages at the top
+        const wavesCleanedReverse = wavesCleaned.slice().reverse();
 				/*
          * Store our data in React State
          */
-				setAllWaves(wavesCleaned);
+				//setAllWaves(wavesCleaned);
+        setAllWaves(wavesCleanedReverse);
 			} else {
 				console.log("Ethereum object doesn't exist!");
 			}
@@ -183,18 +190,23 @@ my old code which worked pretty good
 				/*
         * Execute the actual wave from your smart contract
         */
-				var waveMessage = document.getElementById('waveMessage').value;
-				const waveTxn = await wavePortalContract.wave(waveMessage);
-        //const waveTxn = await wavePortalContract.wave(waveMessage, { gasLimit: 300000 });
+				//var waveMessage = document.getElementById('waveMessage').value;
+        var msgTextbox = document.getElementById('waveMessage');
+        msgTextbox.disabled = true;
+        msgTextbox.prop = "color: red";
+        var waveMessage = msgTextbox.value;
+        console.log("got text value from input: " + waveMessage);
+				//const waveTxn = await wavePortalContract.wave(waveMessage);
+        const waveTxn = await wavePortalContract.wave(waveMessage, { gasLimit: 300000 });
         console.log('Mining...', waveTxn.hash);
         toast.info('Mining...', waveTxn.hash);
 				await waveTxn.wait();
 				console.log('Mined -- ', waveTxn.hash);
-        toast.info('Mined -- ', waveTxn.hash);
+        toast.success('Mined -- ', waveTxn.hash);
 
 				count = await wavePortalContract.getTotalWaves();
 				console.log('Retrieved total wave count...', count.toNumber());
-        await getAllWaves();
+//        await getAllWaves();  // don't need this enymore since add event listener for new wave? new wave added twice with both in
         document.getElementById('waveMessage').value = '';
         
 			} else {
@@ -210,12 +222,13 @@ my old code which worked pretty good
         toast.error(tmpMsg);
       }
 		}
+    msgTextbox.disabled = false;
     setShowSpinner(false);
 	};
 
 const requireMessage = msg => {
-    // contact require messages with have both start and end sigs
-    // if it doesn't have both as expected, return an empty string
+    // extract contact require message that has both start and end sigs
+    // if it doesn't have both sigs as expected, return an empty string
     
     var startSig = `message":`;
     var endSig = `",`
@@ -281,25 +294,31 @@ const requireMessage = msg => {
     let wavePortalContract;
 
     const onNewWave = (from, timestamp, message) => {
+      console.log("allWaves before event added");
+      console.log(allWaves);
       console.log("NewWave", from, timestamp, message);
+      toast.info("new wave from : + from");
       setAllWaves(prevState => [
-        ...prevState,
         {
           address: from,
           timestamp: new Date(timestamp * 1000),
           message: message,
-        },
+        },...prevState,
       ]);
     };
-  
+    console.log("allWaves after event added");
+    console.log(allWaves);
+    
     if (window.ethereum) {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
   
       wavePortalContract = new ethers.Contract(contractAddress, contractABI, signer);
+      // subscribe to contract event : contract.on( event , listener ) 
       wavePortalContract.on("NewWave", onNewWave);
     }
-  
+
+    // unsubscribe to contract event : contract.off( event , listener ) 
     return () => {
       if (wavePortalContract) {
         wavePortalContract.off("NewWave", onNewWave);
@@ -328,7 +347,7 @@ const requireMessage = msg => {
         </div>
 
 				<input type="text" id="waveMessage" className="wave-message"
-					placeholder="type your message here ..."
+					placeholder="type your message here ..." 
     		/>
         
         <button className="waveButton" onClick={wave}>

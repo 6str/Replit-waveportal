@@ -1,3 +1,18 @@
 {
-  "files": {}
+  "files": {
+    "src/App.jsx": [
+      {
+        "id": "65cdad26-ed16-4e2a-91fa-97c5a402aa0e",
+        "line": 315,
+        "version": 7920,
+        "index": 9186
+      },
+      {
+        "id": "19fc4698-e64a-4052-9e3e-5f6d8b655d13",
+        "line": 378,
+        "version": 7805,
+        "index": 10967
+      }
+    ]
+  }
 }

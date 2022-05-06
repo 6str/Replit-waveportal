@@ -5,6 +5,13 @@
 // bug : since adding code to getAllWaves and event listener in useEffect to pick up the new wave event, a new wave shows up twice after the wave txn 
 // a fixed gas price could be a problem when it's wildly expensive on the test net? can the contact pay the gas for sending the prize? can it be deferred till gas price cheap
 // emit win event that the front end listens to and toast message
+// move connected wallet address shown on page?
+// get number of waves per user and display
+// show toast when prize won
+// show prizes won total and to whom
+// check if still in cooldown period before trying to send wave
+// 
+
 
 
 import React, { useEffect, useState } from 'react';
@@ -28,7 +35,7 @@ const App = () => {
    * All state property to store all waves
    */
 	const [allWaves, setAllWaves] = useState([]);
-	const contractAddress = '0xEFd97b86399EEFef5aDC306b8813A40Cd3A188E6';
+	const contractAddress = '0x9ce5708623Ad08363E320714D72624E093927eF5';
 
 	/*
    * Create a method that gets all waves from your contract
@@ -167,11 +174,11 @@ my old code which worked pretty good
 
       await checkIfWalletIsConnected();
       if(!currentAccount){
-            toast.error("You'll need to connect your wallet to wave")
+        toast.error("You'll need to connect your wallet to wave")
         return;
       };
-      
-      setShowSpinner(true);      
+    
+      setShowSpinner(true);
       
       const { ethereum } = window;
      
@@ -183,7 +190,17 @@ my old code which worked pretty good
 					contractABI,
 					signer
 				);
+        
+        console.log("calling isInCooldown")
+        //if(await wavePortalContract.isInCooldown()){
+        const cooldownTimeLeft = await wavePortalContract.getCooldownTimeLeft();
+        if(cooldownTimeLeft > 0){
+          console.log(`still ${cooldownTimeLeft} seconds cooldown time`);
+          toast.warning(`cooldown: you'll have to wait ${cooldownTimeLeft} seconds to wave again`);
+          return;
+        } else { console.log("wasn't in cooldown");}
 
+        
 				let count = await wavePortalContract.getTotalWaves();
 				console.log('Retrieved total wave count...', count.toNumber());
 
@@ -193,11 +210,10 @@ my old code which worked pretty good
 				//var waveMessage = document.getElementById('waveMessage').value;
         var msgTextbox = document.getElementById('waveMessage');
         msgTextbox.disabled = true;
-        msgTextbox.prop = "color: red";
         var waveMessage = msgTextbox.value;
         console.log("got text value from input: " + waveMessage);
 				//const waveTxn = await wavePortalContract.wave(waveMessage);
-        const waveTxn = await wavePortalContract.wave(waveMessage, { gasLimit: 300000 });
+        const waveTxn = await wavePortalContract.wave(waveMessage, { gasLimit: 3000000 });
         console.log('Mining...', waveTxn.hash);
         toast.info('Mining...', waveTxn.hash);
 				await waveTxn.wait();
@@ -213,13 +229,13 @@ my old code which worked pretty good
 				console.log("Ethereum object doesn't exist!");
 			}
 		} catch (error) {
-			console.log(error);
-
-      // if error due to contract require statement, extract require statment message
       var tmpMsg = requireMessage(error.message);
       if(tmpMsg) {
         console.log(tmpMsg);
         toast.error(tmpMsg);
+      } else {
+        console.log(error);
+        toast.error(error.message);
       }
 		}
     msgTextbox.disabled = false;
@@ -227,21 +243,22 @@ my old code which worked pretty good
 	};
 
 const requireMessage = msg => {
-    // extract contact require message that has both start and end sigs
-    // if it doesn't have both sigs as expected, return an empty string
+    // contact require messages with have both start and end sigs
+    // if it doesn't have both as expected, return an empty string
     
     var startSig = `message":`;
     var endSig = `",`
+    
     var startPos = msg.indexOf(startSig);
-
-    startPos = startPos + startSig.length + 1;
+    if(startPos < 0) {return null};
+    startPos = startPos + startSig.length + 1;  //remove startSig and before text
     msg = msg.substring(startPos);
 
     var endPos = msg.indexOf(endSig);
     if(endPos < 0){ 
         return null;
     } else {
-        msg = msg.substring(0, endPos)
+        msg = msg.substring(0, endPos) //rest of message text upto endSig
     }
     return msg;
 };
@@ -280,12 +297,55 @@ const requireMessage = msg => {
 		lblCount.value = '3 by object';
 	};
 
+
+// runTest
+  
+  const runTest = async() => {
+    console.log("running test");
+    try {
+
+      await checkIfWalletIsConnected();
+      if(!currentAccount){
+        toast.error("You'll need to connect your wallet to wave")
+        return;
+      };
+    
+      setShowSpinner(true);
+    
+      const { ethereum } = window;
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const wavePortalContract = new ethers.Contract(
+          contractAddress,
+          contractABI,
+          signer
+        );
+
+        // looks like new blocks only minted every 15 or 30 seconds on rinkeby
+        const result = await wavePortalContract.randomBool();
+        //await wavePortalContract.setCooldownPeriod(120);
+        toast.info("cooldown period seconds: " + await wavePortalContract.getCooldownPeriod());
+        wavePortalContract.randomBoolExternSeed(Math.floor(Math.random() * 10000));
+        toast.info("random bool is " + result);
+      }
+    }
+    catch(err) {
+        console.log(err.message);
+    }
+    setShowSpinner(false);
+  };
+
+  
   {/* end function playground */}
 
 
   
 	useEffect(() => {
     // useEffect is called on page render
+
+    console.log("useEffect run");
+    
     checkIfWalletIsConnected();
 
  /**
@@ -294,10 +354,8 @@ const requireMessage = msg => {
     let wavePortalContract;
 
     const onNewWave = (from, timestamp, message) => {
-      console.log("allWaves before event added");
-      console.log(allWaves);
       console.log("NewWave", from, timestamp, message);
-      toast.info("new wave from : + from");
+      toast.info("new wave from : " + from);
       setAllWaves(prevState => [
         {
           address: from,
@@ -306,8 +364,18 @@ const requireMessage = msg => {
         },...prevState,
       ]);
     };
-    console.log("allWaves after event added");
-    console.log(allWaves);
+
+
+    const onPrizeWon = (from, timestamp, message) => {
+      console.log("Prize Won!", from, timestamp, message);
+      toast.info("Prize Won! : " + from);
+    };
+
+    // const onError = (err) => {
+    //   console.log('error event : ' + err);
+    //   toast.error('error : ' + err);
+    // }
+      
     
     if (window.ethereum) {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -316,17 +384,23 @@ const requireMessage = msg => {
       wavePortalContract = new ethers.Contract(contractAddress, contractABI, signer);
       // subscribe to contract event : contract.on( event , listener ) 
       wavePortalContract.on("NewWave", onNewWave);
+      wavePortalContract.on("PrizeWon", onPrizeWon);
+//      wavePortalContract.on('error', onError);
+      
     }
 
     // unsubscribe to contract event : contract.off( event , listener ) 
     return () => {
       if (wavePortalContract) {
         wavePortalContract.off("NewWave", onNewWave);
+        wavePortalContract.off("PrizeWon", onPrizeWon);
+//        wavePortalContract.off('error', onError);
       }
     };
   
 	}, []);
 
+//#region content
 	return (
 		<div className="mainContainer">
 			<div className="dataContainer">
@@ -354,6 +428,12 @@ const requireMessage = msg => {
 					Wave at Me
 				</button>
 
+        <button className="waveButton" onClick={runTest}>
+					runTest
+				</button>
+
+
+        
 				{/*
         * If there is no currentAccount render this button
         */}
@@ -411,5 +491,7 @@ const requireMessage = msg => {
 		</div>
 	);
 };
+
+//#endregion
 
 export default App;

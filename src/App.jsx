@@ -7,12 +7,7 @@
 
 // todo: changing shade across the page background
 // if no wallet connected when wave at me clicked : prompt to connect wallet
-// refresh page on metamast account and network changes
-// app on app doesn't know or reflect the change unless refreshed/reloaded
-// get number of waves per user and display
-// show toast when prize won
-// show prizes won total and to whom
-// check if still in cooldown period before trying to send wave
+// refresh page on metamask account and network changes
 // 
 
 import React, { useEffect, useState } from 'react';

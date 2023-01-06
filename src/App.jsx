@@ -32,7 +32,7 @@ const App = () => {
   const [allWaves, setAllWaves] = useState([]);
 	
 	
-	const contractAddress = '0x4CE4338cA6bb036b959f2287d272bc1291445263';
+	const contractAddress = '0xcb10b8dbdf39114A3CA2347E988542EC3718156D';
   
 	/*
    * Create a method that gets all waves from your contract
@@ -63,6 +63,7 @@ const App = () => {
         return {
           address: wave.waver,
           timestamp: new Date(wave.timestamp * 1000),
+          wonPrize: wave.wonPrize,
           message: wave.message,
         };
       });
@@ -231,12 +232,21 @@ const App = () => {
 
 
   // get the current user's wave count
-  const getUserCount = (waves) => {
+  const getUserWavesCount = (waves) => {
     return waves.filter(
       wave => currentAccount.toLowerCase() === 
         wave.address.toLowerCase()
     ).length
   }
+
+  const getUserPrizesCount = (waves) => {
+    return waves.filter(
+      wave => currentAccount.toLowerCase() === 
+        wave.address.toLowerCase()
+    ).filter(wave => wave.wonPrize).length
+  }
+
+  // ?.filter(wave => wave.wonPrize).length
   
   const requireMessage = msg => {
     // if error message is from a solidity require statement it will have both start and end sigs
@@ -272,13 +282,14 @@ const App = () => {
  */
     let wavePortalContract;
 
-    const onNewWave = (from, timestamp, message) => {
-      console.log("NewWave", from, timestamp, message);
+    const onNewWave = (from, timestamp, wonPrize, message) => {
+      console.log("NewWave", from, timestamp, wonPrize, message);
       toast.info("new wave from : " + from);
       setAllWaves(prevState => [
         {
           address: from,
           timestamp: new Date(timestamp * 1000),
+          wonPrize: wonPrize,
           message: message,
         },...prevState,
       ]);
@@ -326,7 +337,7 @@ const App = () => {
 
         <div className="box">
           <div>
-            <SpinnerInfinity className="spinner" enabled={showSpinner} color="whitesmoke" secondaryColor="darkgreen" thickness="150"  size="100%" />
+            <SpinnerInfinity className="spinner" enabled={showSpinner} color="#6326f2" secondaryColor="lightgray" thickness="140"  size="100%" />
           </div>
         </div>
 
@@ -356,7 +367,7 @@ const App = () => {
         {currentAccount && (
           <div className="waveCount">
             <label>{`Wave Count: ${allWaves.length}`}</label>
-            <label>{`Your Waves: ${getUserCount(allWaves)}`}</label>
+            <label>{`Your Waves: ${getUserWavesCount(allWaves)} & Prizes: ${getUserPrizesCount(allWaves)}`}</label>
           </div>
         )}
 
@@ -366,6 +377,7 @@ const App = () => {
 						<div className="messages"	key={index}>
 							<div>Message: {wave.message}</div>
 							<div>Time: {wave.timestamp.toString()}</div>
+              <div>Prize Won: {wave.wonPrize ? "✅😁🥳" : "❌🥺😭"}</div>
               <div>Address: {wave.address}</div>
 						</div>
 					);

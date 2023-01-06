@@ -16,12 +16,15 @@
 
 
 .header {
-  color: darkgreen;
+  background: -webkit-linear-gradient(#E21143, #FFB03A);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  
   text-align: center;
   font-size: 4em;
   font-weight: 700;
-/*   animation: breathing 4s infinite forwards; */
-  animation-name: floatWithRotations;
+
+  animation-name: breatheWithRotations;
   animation-iteration-count: infinite;
   animation-duration: 3.5s;
   animation-direction: alternate;
@@ -37,7 +40,9 @@
   text-align: center;
   font-size: 24px;
   font-weight: 600;
-  color: darkgreen;
+  background: -webkit-linear-gradient(#E21143, #FFB03A);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   margin-top: 80px;
 }
 
@@ -58,12 +63,12 @@
 
 .walletAddress {
   cursor: pointer;
-  color: darkgreen;
+  color: lightgray;
   margin-top: 16px;
   padding: 10px 16px;
   font-size: 18px;
   font-weight: 800;
-  background: -webkit-linear-gradient(left, #cab4fd, #5fbdf7);
+  background: -webkit-linear-gradient(left, #6326f2, #0d47f8);
   border-radius: 7px;
   border: 2px solid darkgray;
 }
@@ -73,7 +78,7 @@
   font-size: 18px;
   font-weight: 600;
   color: black;
-  background-color: white ;
+  background-color: whitesmoke ;
   margin-top: 20px;
   padding: 15px;  
   border-radius: 7px;
@@ -90,12 +95,12 @@
 
 .cta-button {
   cursor: pointer;
-  color: darkgreen;
+  color: lightgray;
   font-size: 18px;
   font-weight: 800;
   margin-top: 16px;
   padding: 10px 16px;
-  background: -webkit-linear-gradient(left, #cab4fd, #5fbdf7);
+  background: -webkit-linear-gradient(left, #6326f2, #0d47f8);
   border-radius: 7px;
   border: 2px solid darkgray;
 }
@@ -117,9 +122,9 @@
   justify-content: space-around;
 /*   text-align: center; */
   font-weight: 800;
-  color: whitesmoke;
+  color: lightgray;
   font-size: 18px;
-  background: -webkit-linear-gradient(left, #7e47ff, #009dff);
+  background: -webkit-linear-gradient(left, #6326f2, #0d47f8);
   padding: 15px;
   margin-top: 40px;
   margin-bottom: 1px;
@@ -131,18 +136,18 @@
 .messages {
   font-size: 18px;
   font-weight: 600;
-  color: whitesmoke;
+  color: lightgray;
   padding: 12px;
   margin: 1px 0;
   border: 1px solid lightgray;
-  background: -webkit-linear-gradient(left, #7e47ff, #009dff);
+  background: -webkit-linear-gradient(left, #6326f2, #0d47f8);
 }
 
 .messages-foot {
   font-size: 18px;
   height: 20px;
   margin-top: 1px;
-  background: -webkit-linear-gradient(left, #7e47ff, #009dff);
+  background: -webkit-linear-gradient(left, #6326f2, #0d47f8);
   border: 1px solid lightgray;
   border-radius: 0 0 7px 7px;
 }
@@ -157,7 +162,7 @@
     }
 }
 
-@keyframes floatWithRotations {
+@keyframes breatheWithRotations {
     0% {
         transform: translateY(-5%) rotate(1deg);
     }
@@ -172,23 +177,3 @@
     }
 }
 
-
-@keyframes breathing {
-  0% {
-    -webkit-transform: scale(0.9);
-    -ms-transform: scale(0.9);
-    transform: scale(0.9);
-  }
-
-  50% {
-    -webkit-transform: scale(1);
-    -ms-transform: scale(1);
-    transform: scale(1);
-  }
-
-  100% {
-    -webkit-transform: scale(0.9);
-    -ms-transform: scale(0.9);
-    transform: scale(0.9);
-  }
-}

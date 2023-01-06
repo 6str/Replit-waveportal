@@ -5,18 +5,33 @@
   margin-top: 64px;
 }
 
+
 .dataContainer {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  width: 80%;
   max-width: 600px;
 }
 
+
 .header {
+  color: darkgreen;
   text-align: center;
-  font-size: 48px;
-  font-weight: 600;
+  font-size: 4em;
+  font-weight: 700;
+/*   animation: breathing 4s infinite forwards; */
+  animation-name: floatWithRotations;
+  animation-iteration-count: infinite;
+  animation-duration: 3.5s;
+  animation-direction: alternate;
 }
+
+
+.header .waveIcon {
+  -webkit-text-fill-color: initial;
+}
+
 
 .bio {
   text-align: center;
@@ -26,11 +41,13 @@
   margin-top: 80px;
 }
 
+
 .box {
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 
 .box div {
   margin-top: 20px;
@@ -38,25 +55,49 @@
   height: 50px;
 }
 
-.wave-message {
+
+.walletAddress {
+  cursor: pointer;
+  color: darkgreen;
+  margin-top: 16px;
+  padding: 10px 16px;
   font-size: 18px;
-  font-weight: 400;
-  color: black;
-  background-color: white ;
-  border-radius: 4px;
-  box-shadow: 2px 2px 3px 4px darkslateblue;
-  margin-top: 20px;
-  padding: 15px;  
+  font-weight: 800;
+  background: -webkit-linear-gradient(left, #cab4fd, #5fbdf7);
+  border-radius: 7px;
+  border: 2px solid darkgray;
 }
 
-.waveButton {
-  cursor: pointer;
-  margin-top: 16px;
-  padding: 60px;
-  border: 3;
-  border-radius: 15px;
-  font-size: 24px;
+
+.message-input {
+  font-size: 18px;
   font-weight: 600;
+  color: black;
+  background-color: white ;
+  margin-top: 20px;
+  padding: 15px;  
+  border-radius: 7px;
+/*   box-shadow: -1px 1px 2px 3px darkslateblue; */
+}
+
+
+.buttonsContainer {
+  display: flex;
+  justify-content: space-between;
+  height: 60px;
+}
+
+
+.cta-button {
+  cursor: pointer;
+  color: darkgreen;
+  font-size: 18px;
+  font-weight: 800;
+  margin-top: 16px;
+  padding: 10px 16px;
+  background: -webkit-linear-gradient(left, #cab4fd, #5fbdf7);
+  border-radius: 7px;
+  border: 2px solid darkgray;
 }
 
 .info {
@@ -67,19 +108,87 @@
   padding: 15px;
   margin-top: 25px;
   margin-bottom: 25px;
-  border-radius: 4px;
-  box-shadow: 2px 2px 3px 4px darkslateblue;
+  border-radius: 7px;
+/*   box-shadow: -1px 1px 2px 3px darkslateblue; */
 }
 
 .waveCount {
-  text-align: center;
+  display: flex;
+  justify-content: space-around;
+/*   text-align: center; */
   font-weight: 800;
-  background-color: navy ;
-  color: lightgray;
+  color: whitesmoke;
+  font-size: 18px;
+  background: -webkit-linear-gradient(left, #7e47ff, #009dff);
   padding: 15px;
   margin-top: 40px;
-  margin-bottom: 5px;
-  border-radius: 4px;
-  box-shadow: 2px 2px 3px 4px darkslateblue;
+  margin-bottom: 1px;
+  border: 1px solid silver;
+  border-radius: 7px 7px 0 0;
+/*   box-shadow: -1px 1px 2px 3px darkslateblue; */
 }
 
+.messages {
+  font-size: 18px;
+  font-weight: 600;
+  color: whitesmoke;
+  padding: 12px;
+  margin: 1px 0;
+  border: 1px solid lightgray;
+  background: -webkit-linear-gradient(left, #7e47ff, #009dff);
+}
+
+.messages-foot {
+  font-size: 18px;
+  height: 20px;
+  margin-top: 1px;
+  background: -webkit-linear-gradient(left, #7e47ff, #009dff);
+  border: 1px solid lightgray;
+  border-radius: 0 0 7px 7px;
+}
+
+
+@keyframes float {
+    0% {
+        transform: translateY(-5%);
+    }
+    100%{
+        transform: translateY(5%);
+    }
+}
+
+@keyframes floatWithRotations {
+    0% {
+        transform: translateY(-5%) rotate(1deg);
+    }
+    50% {
+        transform: translateY(-0%) rotate(0deg);
+    }
+    75% {
+        transform: translateY(-0%) rotate(-1deg);
+    }
+    100%{
+        transform: translateY(5%) rotate(0deg);
+    }
+}
+
+
+@keyframes breathing {
+  0% {
+    -webkit-transform: scale(0.9);
+    -ms-transform: scale(0.9);
+    transform: scale(0.9);
+  }
+
+  50% {
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1);
+  }
+
+  100% {
+    -webkit-transform: scale(0.9);
+    -ms-transform: scale(0.9);
+    transform: scale(0.9);
+  }
+}

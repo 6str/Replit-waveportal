@@ -16,4 +16,4 @@ There's not so much you can see or do with on a web3 site like this without a cr
     <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
     <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" />
 </p>
-<img src="readme/demo.gif" /> 
+<img src="GitHub/demo.gif" /> 

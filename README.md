@@ -1,5 +1,5 @@
 ## 👋 Wave Portal
-[Wave Portal](https://buildspace.so/p/build-solidity-web3-app) is the first [Buildspace](https://buildspace.so/) project I did and it brought a few other firsts too.
+[Wave Portal](https://replit-waveportal-i2vh.vercel.app/) is the first [Buildspace](https://buildspace.so/) project I did and it brought a few other firsts too.
 
 It was one of the first contracts I deployed to a public blockchain, the first time working with Hardhat, and it was my introduction to React.
 
